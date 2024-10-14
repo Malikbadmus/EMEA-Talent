@@ -28,8 +28,6 @@ countries = [
     'Zimbabwe'
 ]
 
-filtered_df = Original_data[Original_data['Country'].isin(countries)]
-
 roles = [
     'Academic researcher',
     'Blockchain',
@@ -66,6 +64,20 @@ roles = [
     'Security professional'
 ]
 
+age_ranges = [
+    "Under 18 years old",
+    "18-24 years old",
+    "25-34 years old",
+    "35-44 years old",
+    "45-54 years old",
+    "55-64 years old",
+    "65 years or older",
+    "Prefer not to say"
+]
+
+
+
+filtered_df = Original_data[Original_data['Country'].isin(countries)]
 
 df = filtered_df[filtered_df['DevType'].isin(roles)]
 roles_count = df.groupby(['Country', 'DevType']).size().unstack(fill_value=0)
@@ -79,5 +91,21 @@ output_file_path = os.path.join(DATAPATH, "roles.csv")
 output_file_path_1 = os.path.join(DATAPATH, "roles.xlsx")
 
 
+pivot_table.to_csv(output_file_path, index=True)  
+pivot_table.to_excel(output_file_path_1, index=True)  
+
+
+
+#Get data for age_range
+df = filtered_df[filtered_df['Age'].isin(age_ranges)]
+age_count = df.groupby(['Country', 'Age']).size().unstack(fill_value=0)
+age_total = age_count.sum(axis=1)
+age_percentage_df = (age_count.T / age_total).T * 100
+pivot_table = age_percentage_df.reindex(columns=age_ranges).fillna(0)
+pivot_table = pivot_table.reset_index()
+
+
+output_file_path = os.path.join(DATAPATH, "age.csv")
+output_file_path_1 = os.path.join(DATAPATH, "age.xlsx")
 pivot_table.to_csv(output_file_path, index=True)  
 pivot_table.to_excel(output_file_path_1, index=True)  
